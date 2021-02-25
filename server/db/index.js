@@ -1,0 +1,31 @@
+//this is the access point for all things database related!
+
+const db = require('./db')
+
+const User = require('./models/user');
+
+//associations could go here!
+
+const syncAndSeed =  async()=> {
+  await db.sync({force: true})
+  const users = await Promise.all([
+    await User.create({email: 'cody@email.com', password: '123', profileImageData: `data:image/png;base64,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`}),
+    User.create({email: 'murphy@email.com', password: '123'})
+  ])
+  const [cody, murphy] = users;
+
+  return {
+    users: {
+      cody,
+      murphy
+    }
+  };
+}
+
+module.exports = {
+  db,
+  syncAndSeed,
+  models: {
+    User
+  }
+}
